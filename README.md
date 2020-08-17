@@ -1,5 +1,7 @@
 # amoCRM API v2 documentation
 
+![amoCRM logo](./assets/amocrm-logo.png)  
+
 Архив документации по REST API [amoCRM](https://www.amocrm.ru) **v2** (запросы к API отправляются на /api/v2/) в формате HTML.  
 В настоящее время актуальной версией является [REST API amoCRM **v4**](https://www.amocrm.ru/developers/content/crm_platform/api-reference) (запросы к API отправляются на /api/v4/).  
 
