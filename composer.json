@@ -1,7 +1,7 @@
 {
     "name": "andrey-tech/amocrm-api-v2-docs",
     "description": "Архив документации по REST API amoCRM v2 в формате HTML",
-    "keywords": [ "amocrm", "crm", "api", "docs", "html" ],
+    "keywords": [ "amocrm", "crm", "api", "api-docs", "api-v2", "api-documentation", "html-documentation" ],
     "homepage": "https://github.com/andrey-tech/amocrm-api-v2-docs",
     "minimum-stability": "stable",
     "license": "MIT",
