@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>amoCRM API v2 — документация</title>
+<meta name="description" content="Архив документации по REST API amoCRM v2 с навигацией и оглавлением для чтения в браузере">
+<link rel="icon" href="assets/amocrm-logo.png">
+<style>
+  :root {
+    --bg: #ffffff;
+    --sidebar-bg: #f4f6f8;
+    --border: #dde2e7;
+    --text: #1f2933;
+    --muted: #66788a;
+    --accent: #2b8bc6;
+    --accent-soft: #e3f1fa;
+    --hover: #e9edf1;
+    --notice-bg: #fff6db;
+    --notice-text: #6b5300;
+    --sidebar-w: 300px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15191d;
+      --sidebar-bg: #1c2227;
+      --border: #2d353d;
+      --text: #e3e8ec;
+      --muted: #8d9aa6;
+      --accent: #5ab0e6;
+      --accent-soft: #1d3446;
+      --hover: #252d34;
+      --notice-bg: #3a3215;
+      --notice-text: #f0dc9a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15191d;
+    --sidebar-bg: #1c2227;
+    --border: #2d353d;
+    --text: #e3e8ec;
+    --muted: #8d9aa6;
+    --accent: #5ab0e6;
+    --accent-soft: #1d3446;
+    --hover: #252d34;
+    --notice-bg: #3a3215;
+    --notice-text: #f0dc9a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    overflow: hidden;
+  }
+  a { color: var(--accent); }
+  button { font: inherit; color: inherit; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 10px;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand img { width: 32px; height: 32px; border-radius: 6px; object-fit: contain; background: #fff; }
+  .brand b { display: block; font-size: 15px; }
+  .brand span { display: block; font-size: 12px; color: var(--muted); }
+  .filter { padding: 4px 16px 10px; }
+  .filter input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+  .filter input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .nav { flex: 1; overflow-y: auto; padding: 0 8px 16px; }
+  .group-title {
+    margin: 14px 8px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .doc-link {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .doc-link:hover { background: var(--hover); }
+  .doc-link.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .toc { list-style: none; margin: 2px 0 6px; padding: 0 0 0 10px; border-left: 2px solid var(--border); margin-left: 14px; }
+  .toc a {
+    display: block;
+    padding: 3px 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+  .toc a:hover { color: var(--text); background: var(--hover); }
+  .toc a.current { color: var(--accent); }
+  .toc .lvl-2 a { padding-left: 20px; font-size: 12.5px; }
+  .nav-empty { padding: 12px 10px; color: var(--muted); }
+  .sidebar-footer { padding: 10px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+
+  /* ---------- Content ---------- */
+  .content { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; }
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .toolbar h1 { flex: 1; min-width: 0; margin: 0; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--hover); }
+  .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .menu-btn { display: none; }
+  .notice {
+    display: none;
+    padding: 8px 14px;
+    background: var(--notice-bg);
+    color: var(--notice-text);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .notice code { font-size: 12px; }
+  .frame-wrap { position: relative; flex: 1; min-height: 0; }
+  iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+  .loading {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    color: var(--muted);
+  }
+  .loading.show { display: flex; }
+
+  /* ---------- Home ---------- */
+  .home { flex: 1; overflow-y: auto; padding: 32px 40px; }
+  .home h2 { margin: 0 0 8px; font-size: 24px; }
+  .home p { max-width: 720px; color: var(--muted); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; max-width: 980px; }
+  .card {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .card:hover { border-color: var(--accent); background: var(--hover); }
+  .card small { display: block; color: var(--muted); margin-top: 2px; }
+  .home h3 { margin: 26px 0 0; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+
+  .backdrop { display: none; }
+
+  @media (max-width: 860px) {
+    .sidebar {
+      position: fixed;
+      z-index: 20;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(86vw, var(--sidebar-w));
+      transform: translateX(-100%);
+      transition: transform .2s ease;
+    }
+    body.nav-open .sidebar { transform: none; }
+    body.nav-open .backdrop { display: block; position: fixed; inset: 0; z-index: 10; background: rgba(0, 0, 0, .35); }
+    .menu-btn { display: inline-flex; }
+    .btn .label { display: none; }
+    .home { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#">
+    <img src="assets/amocrm-logo.png" alt="">
+    <span><b>amoCRM REST API v2</b><span>Архив документации</span></span>
+  </a>
+  <div class="filter">
+    <input id="filter" type="search" placeholder="Фильтр разделов  ( / )" aria-label="Фильтр разделов" autocomplete="off">
+  </div>
+  <nav class="nav" id="nav" aria-label="Разделы документации"></nav>
+  <div class="sidebar-footer">
+    Актуальная версия — <a href="https://www.amocrm.ru/developers/content/crm_platform/api-reference" target="_blank" rel="noopener">API v4</a>
+  </div>
+</aside>
+<div class="backdrop" id="backdrop"></div>
+
+<main class="content">
+  <div class="toolbar">
+    <button class="btn menu-btn" id="menuBtn" type="button" aria-label="Меню">☰</button>
+    <h1 id="title">Документация</h1>
+    <button class="btn" id="readerBtn" type="button" aria-pressed="true" title="Скрыть шапку, меню и виджеты сайта amoCRM">📖 <span class="label">Режим чтения</span></button>
+    <a class="btn" id="openBtn" href="#" target="_blank" rel="noopener" title="Открыть страницу отдельно">↗ <span class="label">Отдельно</span></a>
+  </div>
+  <div class="notice" id="notice">
+    Страница открыта из файла (<code>file://</code>), поэтому оглавление, режим чтения и переходы между разделами по ссылкам внутри страниц недоступны.
+    Запустите локальный сервер в папке архива, например <code>python3 -m http.server</code>, и откройте <code>http://localhost:8000/</code>.
+  </div>
+  <section class="home" id="home"></section>
+  <div class="frame-wrap" id="frameWrap" hidden>
+    <iframe id="frame" title="Документация"></iframe>
+    <div class="loading" id="loading">Загрузка…</div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var GROUPS = [
+    { title: 'REST API', docs: [
+      { slug: 'account', name: 'Аккаунт' },
+      { slug: 'auth', name: 'Авторизация' },
+      { slug: 'companies', name: 'Компании' },
+      { slug: 'contacts', name: 'Контакты' },
+      { slug: 'leads', name: 'Сделки' },
+      { slug: 'notes', name: 'События (примечания)' },
+      { slug: 'tasks', name: 'Задачи' },
+      { slug: 'unsorted', name: 'Неразобранное' },
+      { slug: 'webhooks', name: 'Webhooks', note: 'на английском' },
+      { slug: 'customers', name: 'Покупатели' },
+      { slug: 'custom_fields', name: 'Дополнительные поля' },
+      { slug: 'widgets', name: 'Виджеты' },
+      { slug: 'pipelines', name: 'Воронки и этапы продаж' }
+    ] },
+    { title: 'Списки', docs: [
+      { slug: 'catalogs', name: 'Списки' },
+      { slug: 'catalog-elements', name: 'Элементы списков' },
+      { slug: 'products', name: 'Товары' }
+    ] },
+    { title: 'Телефония', docs: [
+      { slug: 'calls-add', name: 'Логирование звонков' },
+      { slug: 'call-event', name: 'Уведомление о звонке' }
+    ] },
+    { title: 'Справка', docs: [
+      { slug: 'errors', name: 'Коды ошибок' },
+      { slug: 'recommendations', name: 'Ограничения и рекомендации' }
+    ] }
+  ];
+
+  // Адреса страниц на сайте amoCRM -> локальные файлы архива.
+  var URL_MAP = {
+    'api/account': 'account',
+    'api/auth': 'auth',
+    'api/companies': 'companies',
+    'api/contacts': 'contacts',
+    'api/leads': 'leads',
+    'api/notes': 'notes',
+    'api/tasks': 'tasks',
+    'api/unsorted': 'unsorted',
+    'api/webhooks': 'webhooks',
+    'api/webhooks-2': 'webhooks',
+    'api/customers': 'customers',
+    'api/custom_fields': 'custom_fields',
+    'api/widgets': 'widgets',
+    'api/pipelines': 'pipelines',
+    'api/errors': 'errors',
+    'api/recommendations': 'recommendations',
+    'catalogs/catalogs': 'catalogs',
+    'catalogs/elements': 'catalog-elements',
+    'catalogs/products': 'products',
+    'telephony/calls_add': 'calls-add',
+    'telephony/call_event': 'call-event'
+  };
+
+  var READER_CSS = [
+    '.top-menu, .main-menu, .page_header, .page_aside, .search__wrapper, .page_footer,',
+    '.new_try_now-wrapper, .pricing-compare__holder, #page_overlay, .cookies-warning,',
+    '#amobutton, .amo-button-holder, #amo-livechat, .amo-livechat, #amo-modal, .amo-modal,',
+    '[class^="amo-button"], [class*=" amo-button"] { display: none !important; }',
+    'html, body, .page_wrapper, .page_holder, .page_content { background: #eef2f5 !important; }',
+    '.page_content { padding: 24px 16px !important; margin: 0 !important; width: auto !important; max-width: none !important; }',
+    '.page_main { float: none !important; width: auto !important; max-width: 1040px !important; margin: 0 auto !important; padding: 0 !important; }',
+    '.page_section, .wrapper_inner, .page_section__inner { margin: 0 !important; padding: 0 !important; width: auto !important; max-width: none !important; }',
+    '.content-block { margin-top: 0 !important; }',
+    '@media (max-width: 700px) { .page_content { padding: 0 !important; } .content-block__inner { padding: 20px 14px !important; } }',
+    '.amo-viewer-flash { animation: amoViewerFlash 1.2s ease; }',
+    '@keyframes amoViewerFlash { from { background: #fff3b0; } to { background: transparent; } }'
+  ].join('\n');
+
+  var DOCS = {};
+  GROUPS.forEach(function (g) { g.docs.forEach(function (d) { DOCS[d.slug] = d; }); });
+
+  var $ = function (id) { return document.getElementById(id); };
+  var nav = $('nav'), filter = $('filter'), frame = $('frame'), frameWrap = $('frameWrap'),
+      home = $('home'), titleEl = $('title'), loading = $('loading'), notice = $('notice'),
+      readerBtn = $('readerBtn'), openBtn = $('openBtn');
+
+  var state = { slug: null, loaded: null, headings: [], pending: null };
+
+  function storageGet(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function storageSet(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* ignore */ } }
+
+  var readerMode = storageGet('amo-docs-reader') !== '0';
+
+  function el(tag, attrs, text) {
+    var n = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  /* ---------- Sidebar & home ---------- */
+
+  function renderNav() {
+    var q = filter.value.trim().toLowerCase();
+    nav.textContent = '';
+    var any = false;
+    GROUPS.forEach(function (g) {
+      var docs = g.docs.filter(function (d) {
+        return !q || d.name.toLowerCase().indexOf(q) !== -1 || d.slug.indexOf(q) !== -1;
+      });
+      if (!docs.length) return;
+      any = true;
+      nav.appendChild(el('div', { 'class': 'group-title' }, g.title));
+      docs.forEach(function (d) {
+        var a = el('a', { 'class': 'doc-link' + (d.slug === state.slug ? ' active' : ''), href: '#' + d.slug }, d.name);
+        if (d.slug === state.slug) a.setAttribute('aria-current', 'page');
+        nav.appendChild(a);
+        if (d.slug === state.slug && state.loaded === d.slug && state.headings.length) {
+          nav.appendChild(renderToc());
+        }
+      });
+    });
+    if (!any) nav.appendChild(el('div', { 'class': 'nav-empty' }, 'Ничего не найдено'));
+  }
+
+  function renderToc() {
+    var ul = el('ul', { 'class': 'toc', id: 'toc' });
+    state.headings.forEach(function (h, i) {
+      var li = el('li', { 'class': 'lvl-' + h.level });
+      var a = el('a', { href: '#' + state.slug + '/' + (i + 1), 'data-index': String(i) }, h.text);
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  function renderHome() {
+    home.textContent = '';
+    home.appendChild(el('h2', null, 'Документация по REST API amoCRM v2'));
+    home.appendChild(el('p', null,
+      'Архив страниц документации по REST API amoCRM v2 (запросы отправляются на /api/v2/). ' +
+      'Выберите раздел слева или в списке ниже. Для каждой страницы строится оглавление, ' +
+      'а ссылки между разделами открываются прямо в архиве.'));
+    GROUPS.forEach(function (g) {
+      home.appendChild(el('h3', null, g.title));
+      var cards = el('div', { 'class': 'cards' });
+      g.docs.forEach(function (d) {
+        var a = el('a', { 'class': 'card', href: '#' + d.slug }, d.name);
+        a.appendChild(el('small', null, 'docs/' + d.slug + '.html' + (d.note ? ' · ' + d.note : '')));
+        cards.appendChild(a);
+      });
+      home.appendChild(cards);
+    });
+  }
+
+  /* ---------- Routing ---------- */
+
+  function parseHash() {
+    var h = decodeURIComponent(location.hash.replace(/^#/, ''));
+    var parts = h.split('/');
+    var slug = DOCS[parts[0]] ? parts[0] : null;
+    var rest = slug ? parts.slice(1).join('/') : '';
+    // #leads/3 — третий пункт оглавления, #notes/note_types — якорь на странице.
+    if (/^\d+$/.test(rest)) return { slug: slug, section: parseInt(rest, 10) || null, anchor: null };
+    return { slug: slug, section: null, anchor: rest || null };
+  }
+
+  function route() {
+    var r = parseHash();
+    document.body.classList.remove('nav-open');
+    if (!r.slug) {
+      state.slug = null;
+      frameWrap.hidden = true;
+      home.hidden = false;
+      titleEl.textContent = 'Документация';
+      document.title = 'amoCRM API v2 — документация';
+      openBtn.hidden = true;
+      readerBtn.hidden = true;
+      renderNav();
+      return;
+    }
+    var doc = DOCS[r.slug];
+    home.hidden = true;
+    frameWrap.hidden = false;
+    openBtn.hidden = false;
+    readerBtn.hidden = !sameOrigin();
+    openBtn.href = 'docs/' + r.slug + '.html';
+    titleEl.textContent = doc.name;
+    document.title = doc.name + ' — amoCRM API v2';
+
+    if (state.slug !== r.slug || state.loaded !== r.slug) {
+      state.slug = r.slug;
+      state.loaded = null;
+      state.headings = [];
+      state.pending = r;
+      loading.classList.add('show');
+      frame.src = 'docs/' + r.slug + '.html';
+      renderNav();
+    } else {
+      scrollToTarget(r);
+    }
+  }
+
+  function sameOrigin() {
+    if (location.protocol === 'file:') return false;
+    try { return !!frame.contentDocument; } catch (e) { return false; }
+  }
+
+  /* ---------- Iframe enhancements ---------- */
+
+  function frameDoc() {
+    try { return frame.contentDocument; } catch (e) { return null; }
+  }
+
+  function applyReader(doc) {
+    doc = doc || frameDoc();
+    if (!doc) return;
+    var style = doc.getElementById('amo-viewer-reader');
+    if (readerMode && !style) {
+      style = doc.createElement('style');
+      style.id = 'amo-viewer-reader';
+      style.textContent = READER_CSS;
+      (doc.head || doc.documentElement).appendChild(style);
+    } else if (!readerMode && style) {
+      style.parentNode.removeChild(style);
+    }
+    readerBtn.setAttribute('aria-pressed', readerMode ? 'true' : 'false');
+  }
+
+  function collectHeadings(doc) {
+    var root = doc.querySelector('main') || doc.body;
+    var list = [];
+    Array.prototype.forEach.call(root.querySelectorAll('h1, h3, h4'), function (h) {
+      var text = h.textContent.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      if (h.tagName === 'H1') return; // заголовок страницы уже в панели
+      list.push({ el: h, text: text, level: h.tagName === 'H3' ? 1 : 2 });
+    });
+    return list;
+  }
+
+  function scrollToSection(n) {
+    if (!n) return;
+    var h = state.headings[n - 1];
+    if (!h) return;
+    h.el.scrollIntoView({ block: 'start' });
+    h.el.classList.remove('amo-viewer-flash');
+    void h.el.offsetWidth;
+    h.el.classList.add('amo-viewer-flash');
+  }
+
+  function scrollToTarget(r) {
+    if (r.section) { scrollToSection(r.section); return; }
+    var doc = frameDoc();
+    var target = doc && findAnchor(doc, r.anchor);
+    if (target) target.scrollIntoView({ block: 'start' });
+  }
+
+  function findAnchor(doc, name) {
+    if (!name) return null;
+    return doc.getElementById(name) || doc.getElementsByName(name)[0] || null;
+  }
+
+  function handleFrameClick(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var raw = a.getAttribute('href') || '';
+    var doc = a.ownerDocument;
+
+    if (raw === '#' || /^javascript:/i.test(raw)) { e.preventDefault(); return; }
+    if (raw.charAt(0) === '#') {
+      // Из-за <base href> на сайте amoCRM такие ссылки иначе уводят на чужую страницу.
+      e.preventDefault();
+      var target = findAnchor(doc, decodeURIComponent(raw.slice(1)));
+      if (target) target.scrollIntoView({ block: 'start' });
+      return;
+    }
+
+    var url;
+    try { url = new URL(a.href); } catch (err) { return; }
+    var m = /(^|\.)amocrm\.(ru|com)$/.test(url.hostname) &&
+            url.pathname.match(/\/developers\/content\/([^/]+)\/([^/]+)\/?$/);
+    var slug = m && URL_MAP[m[1] + '/' + m[2]];
+    e.preventDefault();
+    if (slug) {
+      var anchor = url.hash ? decodeURIComponent(url.hash.slice(1)) : '';
+      var next = '#' + slug + (anchor ? '/' + anchor : '');
+      if (next === location.hash) scrollToTarget({ anchor: anchor });
+      else location.hash = next;
+    } else {
+      window.open(url.href, '_blank', 'noopener');
+    }
+  }
+
+  var spyTimer = null;
+  function onFrameScroll() {
+    if (spyTimer) return;
+    spyTimer = setTimeout(function () {
+      spyTimer = null;
+      var toc = $('toc');
+      if (!toc || !state.headings.length) return;
+      var current = -1;
+      for (var i = 0; i < state.headings.length; i++) {
+        if (state.headings[i].el.getBoundingClientRect().top <= 80) current = i; else break;
+      }
+      Array.prototype.forEach.call(toc.querySelectorAll('a'), function (a) {
+        a.classList.toggle('current', Number(a.getAttribute('data-index')) === current);
+      });
+    }, 100);
+  }
+
+  frame.addEventListener('load', function () {
+    loading.classList.remove('show');
+    if (!state.slug) return;
+    var doc = frameDoc();
+    if (!doc || location.protocol === 'file:') {
+      notice.style.display = 'block';
+      readerBtn.hidden = true;
+      return;
+    }
+    notice.style.display = 'none';
+    readerBtn.hidden = false;
+    state.loaded = state.slug;
+    applyReader(doc);
+    state.headings = collectHeadings(doc);
+    doc.addEventListener('click', handleFrameClick, true);
+    doc.addEventListener('keydown', function (e) {
+      if (e.key === '/' && !/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) { e.preventDefault(); filter.focus(); }
+    });
+    try { frame.contentWindow.addEventListener('scroll', onFrameScroll, { passive: true }); } catch (err) { /* ignore */ }
+    renderNav();
+    var active = nav.querySelector('.doc-link.active');
+    if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+    if (state.pending) {
+      var pending = state.pending;
+      state.pending = null;
+      setTimeout(function () { scrollToTarget(pending); }, 50);
+    }
+  });
+
+  /* ---------- UI events ---------- */
+
+  nav.addEventListener('click', function (e) {
+    var a = e.target.closest('.toc a');
+    if (!a) return;
+    // Повторный клик по тому же пункту не меняет hash — прокручиваем сами.
+    if (a.getAttribute('href') === location.hash) {
+      e.preventDefault();
+      scrollToSection(Number(a.getAttribute('data-index')) + 1);
+      document.body.classList.remove('nav-open');
+    }
+  });
+  filter.addEventListener('input', renderNav);
+  filter.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var first = nav.querySelector('.doc-link');
+      if (first) location.hash = first.getAttribute('href').slice(1);
+    } else if (e.key === 'Escape') {
+      filter.value = '';
+      renderNav();
+      filter.blur();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && document.activeElement !== filter) { e.preventDefault(); filter.focus(); }
+  });
+  readerBtn.addEventListener('click', function () {
+    readerMode = !readerMode;
+    storageSet('amo-docs-reader', readerMode ? '1' : '0');
+    applyReader();
+  });
+  $('menuBtn').addEventListener('click', function () { document.body.classList.toggle('nav-open'); });
+  $('backdrop').addEventListener('click', function () { document.body.classList.remove('nav-open'); });
+  window.addEventListener('hashchange', route);
+
+  readerBtn.setAttribute('aria-pressed', readerMode ? 'true' : 'false');
+  renderHome();
+  route();
+})();
+</script>
+</body>
+</html>
